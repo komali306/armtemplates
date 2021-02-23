@@ -1,25 +1,24 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "0.0.0.1",
-    "parameters": {        
+    "parameters": {
         "vnetaddressspace": {
             "type": "string",
             "metadata": {
-                "description": "description"
+                "description": "address prefixes of the vnet"
             },
             "defaultValue": "10.10.0.0/16"
         },
-        "subnetaddressspaces": {
+        "subnetaddressspace": {
             "type": "array",
             "metadata": {
-                "description": "description"
+                "description": "address prefixes of the subnet"
             },
             "defaultValue": ["10.10.0.0/24", "10.10.1.0/24", "10.10.2.0/24"]
         }
-        
     },
     "variables": {
-        "vnetname": "ntier",
+        "vnetname": "vnetarm",
         "location": "[resourceGroup().location]"
     },
     "resources": [
@@ -35,7 +34,7 @@
                 "addressSpace": {
                     "addressPrefixes": [
                         "[parameters('vnetaddressspace')]"
-                    ]
+                        ]                 
                 }
             }
         },
@@ -43,23 +42,21 @@
             "name": "[concat(variables('vnetname'), '/', 'subnet',copyIndex())]",
             "apiVersion": "2020-07-01",
             "type": "Microsoft.Network/virtualNetworks/subnets",
-            "properties": {
-                "addressPrefix": "[parameters('subnetaddressspaces')[copyIndex()]]"
-
+            "properties" : {
+                "addressPrefixes": "[parameters('subnetaddressspace')[copyIndex()]]"
             },
             "copy": {
-                "name": "subnetCopy",
-                "count": "[length(parameters('subnetaddressspaces'))]",
+                "name": "subnetcopy",
+                "count": "[length(parameters('subnetaddressspace'))]",
                 "mode": "serial"
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetname'))]"
             ]
-        
         }
-
     ]
-}    
+}
+        
     
 
 
