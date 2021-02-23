@@ -2,26 +2,12 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "0.0.0.1",
     "parameters": {
-        "vnetname": {
-            "type": "string",
-            "metadata": {
-                "description": "name of the vnet"
-            },
-            "defaultValue": "vnetarm"
-        },
         "vnetaddressprefix": {
             "type": "string",
             "metadata": {
                 "description": "address prefixes of the vnet"
             },
             "defaultValue" : "10.10.0.0/16"
-        },
-        "subnetname": {
-            "type": "array",
-            "metadata": {
-                "description": "name of the subnets"
-            },
-            "defaultValue" : ["web","app", "db"]
         },
         "subnetprefixes": {
             "type": "array",
@@ -31,14 +17,19 @@
             "defaultValue" : ["10.10.0.0/24", "10.10.1.0/24", "10.10.2.0/24"]
         }
     },
+    "variables" : {
+        "vnetname": "vnetarm",
+        "subnetnames": ["web", "app", "db"],
+        "location": "[resourceGroup().location]"
+    },
     "resources": [
         {
             "name": "vnetarm",
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2019-11-01",
-            "location": "[resourceGroup().location]",
+            "location": "[variables('location')]",
             "tags": {
-                "displayName": "[parameters('vnetname')]"
+                "displayName": "[variables('vnetname')]"
             },
             "properties": {
                 "addressSpace": {
@@ -48,19 +39,19 @@
                 },
                 "subnets": [
                     {
-                        "name": "[parameters('subnetname')[0]]",
+                        "name": "[variables('subnetnames')[0]]",
                         "properties": {
                             "addressPrefix": "[parameters('subnetprefixes')[0]]"
                         }
                     },
                     {
-                        "name": "[parameters('subnetname')[1]]",
+                        "name": "[variables('subnetnames')[1]]",
                         "properties": {
                             "addressPrefix": "[parameters('subnetprefixes')[1]]"
                         }
                     },
                     {
-                        "name": "[parameters('subnetname')[2]]",
+                        "name": "[variables('subnetnames')[2]]",
                         "properties": {
                             "addressPrefix": "[parameters('subnetprefixes')[2]]"
                         }
