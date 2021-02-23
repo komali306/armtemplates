@@ -1,0 +1,68 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "0.0.0.1",
+    "parameters": {
+        "vnetaddressprefix": {
+            "type": "string",
+            "metadata": {
+                "description": "address prefixes of the vnet"
+            },
+            "defaultValue" : "10.10.0.0/16"
+        },
+        "subnetprefixes": {
+            "type": "array",
+            "metadata": {
+                "description": "address prefixes of the subnet"
+            },
+            "defaultValue" : ["10.10.0.0/24", "10.10.1.0/24", "10.10.2.0/24"]
+        }
+    },
+    "variables" : {
+        "vnetname": "vnetarm",
+        "location": "[resourceGroup().location]"
+    },
+    "resources": [
+        {
+            "name": "[variables('vnetname')]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2019-11-01",
+            "location": "[variables('location')]",
+            "tags": {
+                "displayName": "[variables('vnetname')]"
+            },
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('vnetaddressprefix')]" 
+                    ]                
+                }
+            }
+        },
+        {
+            "name": "[concat(variables('vnetname'), '/', 'subnet',copyIndex())]",
+            "apiVersion": "2020-07-01",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "properties" : {
+                "addressPrefixes": "[parameters('subnetprefixes')[copyIndex()]]"
+            },
+            "copy" : {
+                "name": "subnetcopy",
+                "count" : "[length(parameters('subnetprefixes'))]",
+                "mode" : "serial"
+            },
+            "dependsOn" : [
+                "[resourceId('Microsoft.Network/virtualNetworks',variables('vnetname'))]"
+            ]
+           
+           
+
+        }
+    ]
+}
+        
+    
+
+
+
+
+
