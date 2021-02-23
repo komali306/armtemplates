@@ -1,24 +1,25 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "0.0.0.1",
-    "parameters": {
-        "vnetaddressprefix": {
+    "parameters": {        
+        "vnetaddressspace": {
             "type": "string",
             "metadata": {
-                "description": "address prefixes of the vnet"
+                "description": "description"
             },
-            "defaultValue" : "10.10.0.0/16"
+            "defaultValue": "10.10.0.0/16"
         },
-        "subnetprefixes": {
+        "subnetaddressspaces": {
             "type": "array",
             "metadata": {
-                "description": "address prefixes of the subnet"
+                "description": "description"
             },
-            "defaultValue" : ["10.10.0.0/24", "10.10.1.0/24", "10.10.2.0/24"]
+            "defaultValue": ["10.10.0.0/24", "10.10.1.0/24", "10.10.2.0/24"]
         }
+        
     },
-    "variables" : {
-        "vnetname": "vnetarm",
+    "variables": {
+        "vnetname": "ntier",
         "location": "[resourceGroup().location]"
     },
     "resources": [
@@ -33,8 +34,8 @@
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
-                        "[parameters('vnetaddressprefix')]" 
-                    ]                
+                        "[parameters('vnetaddressspace')]"
+                    ]
                 }
             }
         },
@@ -42,24 +43,23 @@
             "name": "[concat(variables('vnetname'), '/', 'subnet',copyIndex())]",
             "apiVersion": "2020-07-01",
             "type": "Microsoft.Network/virtualNetworks/subnets",
-            "properties" : {
-                "addressPrefixes": "[parameters('subnetprefixes')[copyIndex()]]"
-            },
-            "copy" : {
-                "name": "subnetcopy",
-                "count" : "[length(parameters('subnetprefixes'))]",
-                "mode" : "serial"
-            },
-            "dependsOn" : [
-                "[resourceId('Microsoft.Network/virtualNetworks',variables('vnetname'))]"
-            ]
-           
-           
+            "properties": {
+                "addressPrefix": "[parameters('subnetaddressspaces')[copyIndex()]]"
 
-        }
-    ]
-}
+            },
+            "copy": {
+                "name": "subnetCopy",
+                "count": "[length(parameters('subnetaddressspaces'))]",
+                "mode": "serial"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetname'))]"
+            ]
         
+        }
+
+    ]
+}    
     
 
 
