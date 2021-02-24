@@ -9,7 +9,7 @@
             },
             "defaultValue": "10.10.0.0/16"
         },
-        "subnetaddressspace": {
+        "subnetaddressspaces": {
             "type": "array",
             "metadata": {
                 "description": "address prefixes of the subnet"
@@ -34,20 +34,21 @@
                 "addressSpace": {
                     "addressPrefixes": [
                         "[parameters('vnetaddressspace')]"
-                        ]                 
+                    ]                 
                 }
             }
         },
-        {
+{
             "name": "[concat(variables('vnetname'), '/', 'subnet',copyIndex())]",
             "apiVersion": "2020-07-01",
             "type": "Microsoft.Network/virtualNetworks/subnets",
-            "properties" : {
-                "addressPrefixes": "[parameters('subnetaddressspace')[copyIndex()]]"
+            "properties": {
+                "addressPrefix": "[parameters('subnetaddressspaces')[copyIndex()]]"
+
             },
             "copy": {
-                "name": "subnetcopy",
-                "count": "[length(parameters('subnetaddressspace'))]",
+                "name": "subnetCopy",
+                "count": "[length(parameters('subnetaddressspaces'))]",
                 "mode": "serial"
             },
             "dependsOn": [
