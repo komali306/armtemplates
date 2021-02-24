@@ -34,7 +34,7 @@
                 "addressSpace": {
                     "addressPrefixes": [
                         "[parameters('vnetaddressspace')]"
-                        ]                 
+                    ]                 
                 }
             }
         },
@@ -46,7 +46,7 @@
                 "addressPrefixes": "[parameters('subnetaddressspace')[copyIndex()]]"
             },
             "copy": {
-                "name": "subnetcopy",
+                "name": "subnetCopy",
                 "count": "[length(parameters('subnetaddressspace'))]",
                 "mode": "serial"
             },
